@@ -70,17 +70,13 @@ struct fitQ fit_NReinas(struct Population p, int n, int m) {
             if (p.genetics[i].gen[j].value) {
                 k = queen * (n - 1);
                 position = j - queen - k;
-                printf("%d,",position);
-                switch (position) {
-                    case 0:
-                        printf("(first)");
-                        break;
-                    case (n-1):
-                        printf("(last)");
-                        break;
-                    default:
-                        printf("medium");
-                        break;
+                printf("%d",position);
+                if (position == 0) {
+                    printf("(first) ");
+                } else if (position == n-1) {
+                    printf("(last) ");
+                } else {
+                    printf("(medium) ");
                 }
                 // if (!p.genetics[i].gen[j-1].value && !p.genetics[i].gen[j+1].value && !p.genetics[i].gen[j+n].value) {
                 //     k++;
