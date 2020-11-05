@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define M 3 // Número de individuos en la población
+#define M 2 // Número de individuos en la población
 #define N 4 // Número de reinas
 
 struct Gen {
@@ -65,25 +65,32 @@ struct Population generatePopulation(int m, int n) {
 struct fitQ fit_NReinas(struct Population p, int n, int m) {
     struct fitQ fit;
     for (int i = 0; i < m; i++) {
-        printf("- ");
-        for (int j = 0, k = 0, queen = 0, position = 0; j < n*n; j++) { 
-            if (p.genetics[i].gen[j].value) {
-                k = queen * (n - 1);
-                position = j - queen - k;
-                printf("%d",position);
-                if (position == 0) {
-                    printf("(first) ");
-                } else if (position == n-1) {
-                    printf("(last) ");
-                } else {
-                    printf("(medium) ");
+        int score = 0;
+        for (int j = 0; j < n*n; j++) {
+            if (p.genetics[i].gen[j].value) { // Si encuentra una reina retorna verdadero
+                int row = j/n;
+                int column = j%n;
+                printf("\nreina en posicion row %d column %d: ",row,column);
+                int positionRow = row*n;
+                int positionColumn = (0*n) + (positionRow%n);
+                for (int k = 0; k < n; k++) {
+                    //revisamos ataques sobre la misma fila
+                    if (positionRow != j && p.genetics[i].gen[positionRow].value == 1) {
+                        printf("attack in row from %d to %d, ",positionRow,j);
+                    } else {
+                        score++;
+                    }
+                    //revisamos ataques sobre la misma columna
+                    if (positionColumn != j && p.genetics[i].gen[positionColumn].value == 1) {
+                        printf("attack in column from %d to %d, ",positionColumn,j);
+                    } else {
+                        score++;
+                    }
+                    positionRow++;
+                    positionColumn = ((k+1)*n) + (j % n);
                 }
-                // if (!p.genetics[i].gen[j-1].value && !p.genetics[i].gen[j+1].value && !p.genetics[i].gen[j+n].value) {
-                //     k++;
-                //     fit.array[i].value = k;
-                // }
-                queen++;
             }
+            fit.array[i].value = score;
         }
         printf("\n");
     }
@@ -95,14 +102,28 @@ int main() {
     struct fitQ fit = fit_NReinas(p, N, M);
 
     // Imprime la población
+    int q = 0;
+    printf("\n");
     for (int i = 0; i < M; i++) {
-        printf("[");
+        printf("Tablero %d:\n",i+1);
         for (int j = 0; j < N*N; j++) {
-            printf("%d,",p.genetics[i].gen[j].value);
+            printf("%d ",p.genetics[i].gen[j].value);
+            if(q < N-1){
+                q++;
+            } else {
+                q = 0;
+                printf("\n");
+            }
+        }
+        printf("\n");
+    }
+
+    printf("Resultado de funcion fitness:\n");
+    printf("[");
+        for (int i = 0; i < M; i++) {
+            printf("%d,",fit.array[i].value);
         }
         printf("]\n");
-    }
-    printf("\n");
 
     return 0;
 }
