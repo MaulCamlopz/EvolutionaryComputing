@@ -34,16 +34,35 @@ struct fitItem {
 };
 
 // funcion variante del coseno
-double function(double x){
+double function(double x) {
     double value = ((5.5)*x)-(3.5);
     double result = ((1 - (pow(value, 2.0))) * (cos(value) + 1) + 2);
     return result;
 }
 
+int selection(struct fitItem fitPopulation, int n) {
+	double S, c, Ca, r;
+	int i, response;
+	srand (time(NULL));
+    response = -1;
+	r =  (( rand( ) % 1001 ) / 1000.0f) ;
+	for (S = 0.0, i = 0; i < n; i++) {
+		S = S + fitPopulation.array[i].value;
+    }
+    c = r*S;
+    for (Ca = 0.0, i = 0; i < n; i++) {
+		Ca = Ca + fitPopulation.array[i].value;
+		if (Ca > c) {
+			response = i;
+			break;
+		}
+    }
+    return response;
+}
 
 struct Population generatePopulation(int n, int longGen) {
     struct Population p;
-    srand (time(NULL)); // Cambia la semilla de la secuencia de números aleatorios
+    srand (time(NULL)); // Cambia la semilla de la secuencia de números  aleatorios
     int i, j;
     for (i = 0; i < n; i++) { // Recorre los genes
         for (j = 0; j < longGen; j++) { // Recorre cada gen
@@ -54,7 +73,7 @@ struct Population generatePopulation(int n, int longGen) {
     return p;
 }
 
-struct fitItem fit(struct Population p, int n, int longGen) {
+struct fitItem fitness(struct Population p, int n, int longGen) {
 	struct fitItem fit;
     int i, j, k;
     for (i = 0; i < n; i++) {
@@ -73,9 +92,10 @@ int main() {
     int n = N;
     int longGen = L;
     struct Population p = generatePopulation(n, longGen);
-    struct fitItem fitItem = fit(p, n, longGen);
+    struct fitItem fitPopulation = fitness(p, n, longGen);
+
     // Imprime la población
-    printf("[");
+    printf(" [");
     int i, j;
     for (i = 0; i < N; i++) {
         printf("[");
@@ -86,15 +106,16 @@ int main() {
     }
     printf("]");
     printf("\n");
+
     //imprime las calificaciones
-    printf("[");
+    printf(" [");
     for (i = 0; i < n; i++) {
-        printf("%f,",fitItem.array[i].value);
+        printf("%f, ",fitPopulation.array[i].value);
     }
     printf("]");
-    
     printf("\n");
+    
+    printf(" Elemento seleccionado: %d\n", selection(fitPopulation, n));
 
     return 0;
 }
-
