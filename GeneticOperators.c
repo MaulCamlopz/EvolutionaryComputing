@@ -122,6 +122,28 @@ struct Children crossover(struct Children sel, double pC, int lG) {
     return c;
 }
 
+// Función de mutación
+struct Children mutation(struct Children sel, double pM, int lG) {
+    double q = 0.0;
+    int i, j = 0;
+    for (i = 0; i < CHILD; i++) {
+        for (j = 0; j < lG; j++) {
+            q = ((rand() % 1001) / 1000.0f);
+            if (q < pM) {
+                printf("Mutacion\n");
+                printf("valor de q: %f, valor de pM: %f\n", q, pM);
+                printf("Para %d, en la posicion %d\n", i, j);
+                if (sel.genetics[i].gen[j].value == 1) {
+                    sel.genetics[i].gen[j].value = 0;
+                } else {
+                    sel.genetics[i].gen[j].value = 1;
+                }
+            }
+        }
+    }
+    return sel;
+}
+
 // Función para generar una población
 struct Population generatePopulation(int n, int longGen) {
     struct Population p;
@@ -185,14 +207,28 @@ int main(int argc, char const *argv[]) {
         printf("%d,", H2.gen[i].value);
     }
     printf("]");
-    printf("\n");
+    printf("\n\n");
     
     struct Children c;
     c.genetics[0] = H1;
     c.genetics[1] = H2;
 
     c = crossover(c, 0.1, L);
+    
+    // Imprime la población
+    printf("[");
+    for (i = 0; i < CHILD; i++) {
+        printf("[");
+        for (j = 0; j < L; j++) {
+            printf("%d,",c.genetics[i].gen[j].value);
+        }
+        printf("],");
+    }
+    printf("]");
+    printf("\n\n");
 
+    c = mutation(c, 0.1, L);
+    
     // Imprime la población
     printf("[");
     for (i = 0; i < CHILD; i++) {
